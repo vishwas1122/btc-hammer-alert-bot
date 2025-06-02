@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 WEBHOOK_URL = "https://discord.com/api/webhooks/1378808063900778506/mSM9C5JD5bNPyGvnf6J05SWEC8lPhhH-llSZJdLDZWNmS0i5CBD4G-b86hm5xF4mOuUy"
 symbol = "BTCUSDT"
-interval = "1m"
+interval = "1m"  # Use 1m for testing. Change to 15m later
 limit = 100
 
 def get_candles():
@@ -47,13 +47,14 @@ def run_checker():
                 print(f"No hammer at {last['timestamp']}")
         except Exception as e:
             print("Error:", e)
-        time.sleep(900)  # 15 min
+        time.sleep(60)  # 1 minute for testing
 
 @app.route("/")
 def home():
     return "Bot is running!", 200
 
+# Start background thread outside __main__, so Render picks it up
+threading.Thread(target=run_checker, daemon=True).start()
+
 if __name__ == "__main__":
-    # Start background thread BEFORE starting Flask app
-    threading.Thread(target=run_checker, daemon=True).start()
     app.run(host="0.0.0.0", port=8080)
