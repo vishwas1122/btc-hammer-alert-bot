@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 WEBHOOK_URL = "https://discord.com/api/webhooks/1378808063900778506/mSM9C5JD5bNPyGvnf6J05SWEC8lPhhH-llSZJdLDZWNmS0i5CBD4G-b86hm5xF4mOuUy"
 symbol = "BTCUSDT"
-interval = "15m"
+interval = "1m"
 limit = 100
 
 def get_candles():
