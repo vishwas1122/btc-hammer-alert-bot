@@ -47,17 +47,13 @@ def run_checker():
                 print(f"No hammer at {last['timestamp']}")
         except Exception as e:
             print("Error:", e)
-        time.sleep(900)
-
-# 👇 Background thread start on first request
-@app.before_first_request
-def activate_job():
-    thread = threading.Thread(target=run_checker)
-    thread.start()
+        time.sleep(900)  # 15 min
 
 @app.route("/")
 def home():
     return "Bot is running!", 200
 
 if __name__ == "__main__":
+    # Start background thread BEFORE starting Flask app
+    threading.Thread(target=run_checker, daemon=True).start()
     app.run(host="0.0.0.0", port=8080)
