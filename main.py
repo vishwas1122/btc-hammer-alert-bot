@@ -3,17 +3,14 @@ import pandas as pd
 import time
 from datetime import datetime
 from flask import Flask
+import threading
+
+app = Flask(__name__)
 
 WEBHOOK_URL = "https://discord.com/api/webhooks/1378808063900778506/mSM9C5JD5bNPyGvnf6J05SWEC8lPhhH-llSZJdLDZWNmS0i5CBD4G-b86hm5xF4mOuUy"
 symbol = "BTCUSDT"
 interval = "15m"
 limit = 100
-
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "Bot is running!", 200
 
 def get_candles():
     url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={limit}"
@@ -52,10 +49,15 @@ def run_checker():
             print("Error:", e)
         time.sleep(900)
 
-import threading
+# 👇 Background thread start on first request
+@app.before_first_request
+def activate_job():
+    thread = threading.Thread(target=run_checker)
+    thread.start()
 
-t = threading.Thread(target=run_checker)
-t.start()
+@app.route("/")
+def home():
+    return "Bot is running!", 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
